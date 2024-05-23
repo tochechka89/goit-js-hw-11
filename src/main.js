@@ -24,24 +24,28 @@ function onSearch(event) {
 
   fetchPhotos(searchQuery)
     .then(imagesData => {
+      loaderEl.classList.add('is-hidden');
       if (imagesData.hits.length === 0) {
         iziToast.error({
           message:
             'Sorry, there are no images matching your search query. Please try again!',
         });
+      } else {
+        imgContainer.innerHTML = createMarkup(imagesData.hits);
+        const lightbox = new SimpleLightbox('.gallery a', {
+          captionsData: 'alt',
+          captionsDelay: 250,
+        });
       }
-
-      imgContainer.innerHTML = createMarkup(imagesData.hits);
-      const lightbox = new SimpleLightbox('.gallery a', {
-        captionsData: 'alt',
-        captionsDelay: 250,
-      });
-    /*   lightbox.refresh(); */
     })
-    .catch(error => console.log(error))
+
+  
+    .catch(error => {
+      console.log(error);
+      loaderEl.classList.add('is-hidden');
+    })
     .finally(() => {
       event.target.reset();
-      loaderEl.classList.add('is-hidden');
     });
 }
 
